@@ -9,8 +9,10 @@ jobs:
       - uses: actions/checkout@v1
         with:
           depth: 50
-      - name: Set Rust Version
-        run: rustup default ${{ matrix.channel }}
+      - name: Set Rust Version & Target
+        run: |
+          rustup default ${{ matrix.channel }}
+          rustup target add ${{ matrix.target }}
       - name: Build
         run: cargo build --target ${{ matrix.target }}
       - name: Test
