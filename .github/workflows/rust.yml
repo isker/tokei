@@ -58,6 +58,8 @@ jobs:
         with:
           name: cross-apple-darwin
           path: /usr/local/bin/
+      - name: Make Cross Executable
+        run: chmod +x /usr/local/bin/cross
       - name: Set Rust Version & Target
         run: |
           ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
