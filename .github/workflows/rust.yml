@@ -28,6 +28,11 @@ jobs:
         channel: [stable, beta, nightly]
         target:
           - x86_64-apple-darwin
+          - aarch64-apple-ios
+          - armv7-apple-ios
+          - armv7s-apple-ios
+          - i386-apple-ios
+          - x86_64-apple-ios
   linux:
     runs-on: ubuntu-latest
     steps:
@@ -50,8 +55,8 @@ jobs:
       fail-fast: true
       matrix:
         channel: [stable, beta, nightly]
-        # target:
-        #   - aarch64-unknown-linux-gnu
+        target:
+          - aarch64-unknown-linux-gnu
         #   - arm-unknown-linux-gnueabi
         #   - armv7-unknown-linux-gnueabihf
         #   - i686-unknown-linux-gnu
