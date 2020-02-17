@@ -3,46 +3,64 @@ name: Trust 2.0
 on: [push, pull_request]
 
 jobs:
-  windows:
-    runs-on: windows-latest
+  install_cross:
+    runs_on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-        with:
-          depth: 50
-      - name: Set Rust Version & Target
-        run: bash ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-      - name: Build
-        run: cargo build --workspace --target ${{ matrix.target }}
-      - name: Test
-        run: cargo test --workspace --target ${{ matrix.target }}
-    strategy:
-      fail-fast: false
-      matrix:
-        channel: [stable, beta, nightly]
-        target:
-          - i686-pc-windows-gnu
-          - i686-pc-windows-msvc
-          - x86_64-pc-windows-gnu
-          - x86_64-pc-windows-msvc
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v1
-        with:
-          depth: 50
-      - name: Set Rust Version & Target
-        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-      - uses: ./actions/get-github-release
+      - name: Install Cross
+        uses: ./actions/get-github-release
         id: cross
         with:
           owner: rust-embedded
           repo: cross
-          matches: apple-darwin
+          matches: ${{ matrix.platform }}
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload cross artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: cross-${{ matrix.platform }}
+          path: ${{ steps.cross.output.install_path }}
+    strategy:
+      matrix:
+        platform: [linux-musl, apple-darwin]
+  #  windows:
+  #    runs-on: windows-latest
+  #    steps:
+  #      - uses: actions/checkout@v1
+  #        with:
+  #          depth: 50
+  #      - name: Set Rust Version & Target
+  #        run: bash ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
+  #      - name: Build
+  #        run: cargo build --workspace --target ${{ matrix.target }}
+  #      - name: Test
+  #        run: cargo test --workspace --target ${{ matrix.target }}
+  #    strategy:
+  #      fail-fast: false
+  #      matrix:
+  #        channel: [stable, beta, nightly]
+  #        target:
+  #          - i686-pc-windows-gnu
+  #          - i686-pc-windows-msvc
+  #          - x86_64-pc-windows-gnu
+  #          - x86_64-pc-windows-msvc
+  macos:
+    runs-on: macos-latest
+    needs: install_cross
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          depth: 50
+      - name: Download Cross
+        uses: actions/download-artifact@v1
+        with:
+          name: cross-apple-darwin
+          path: /usr/local/bin/cross
+      - name: Set Rust Version & Target
+        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
       - name: Build
-        run: ${{ steps.cross.outputs.install_path }} build --workspace --target ${{ matrix.target }}
+        run: cross build --workspace --target ${{ matrix.target }}
       - name: Test
-        run: ${{ steps.cross.outputs.install_path }} test --workspace --target ${{ matrix.target }}
+        run: cross test --workspace --target ${{ matrix.target }}
         # Only test on macOS platforms since we can't simulate the others.
         if: matrix.target == 'x86_64-apple-darwin'
     strategy:
@@ -72,41 +90,41 @@ jobs:
             channel: beta
           - target: i386-apple-ios
             channel: nightly
-  linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-        with:
-          depth: 50
-      - name: Set Rust Version & Target
-        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-      - uses: ./actions/get-github-release
-        with:
-          owner: rust-embedded
-          repo: cross
-          matches: linux-musl
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build
-        run: /tmp/cross build --target ${{ matrix.target }}
-      - name: Test
-        run: /tmp/cross test --target ${{ matrix.target }}
-    strategy:
-      fail-fast: true
-      matrix:
-        channel: [stable, beta, nightly]
-        target:
-          - aarch64-unknown-linux-gnu
-        #   - arm-unknown-linux-gnueabi
-        #   - armv7-unknown-linux-gnueabihf
-        #   - i686-unknown-linux-gnu
-        #   - i686-unknown-linux-musl
-        #   - mips-unknown-linux-gnu
-        #   - mips64-unknown-linux-gnuabi64
-        #   - mips64el-unknown-linux-gnuabi64
-        #   - mipsel-unknown-linux-gnu
-        #   - powerpc-unknown-linux-gnu
-        #   - powerpc64-unknown-linux-gnu
-        #   - powerpc64le-unknown-linux-gnu
-        #   - s390x-unknown-linux-gnu
-        #   - x86_64-unknown-linux-gnu
-        #   - x86_64-unknown-linux-musl
+#  linux:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#        with:
+#          depth: 50
+#      - name: Set Rust Version & Target
+#        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
+#      - uses: ./actions/get-github-release
+#        with:
+#          owner: rust-embedded
+#          repo: cross
+#          matches: linux-musl
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Build
+#        run: /tmp/cross build --target ${{ matrix.target }}
+#      - name: Test
+#        run: /tmp/cross test --target ${{ matrix.target }}
+#    strategy:
+#      fail-fast: true
+#      matrix:
+#        channel: [stable, beta, nightly]
+#        target:
+#          - aarch64-unknown-linux-gnu
+#        #   - arm-unknown-linux-gnueabi
+#        #   - armv7-unknown-linux-gnueabihf
+#        #   - i686-unknown-linux-gnu
+#        #   - i686-unknown-linux-musl
+#        #   - mips-unknown-linux-gnu
+#        #   - mips64-unknown-linux-gnuabi64
+#        #   - mips64el-unknown-linux-gnuabi64
+#        #   - mipsel-unknown-linux-gnu
+#        #   - powerpc-unknown-linux-gnu
+#        #   - powerpc64-unknown-linux-gnu
+#        #   - powerpc64le-unknown-linux-gnu
+#        #   - s390x-unknown-linux-gnu
+#        #   - x86_64-unknown-linux-gnu
+#        #   - x86_64-unknown-linux-musl
