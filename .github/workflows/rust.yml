@@ -37,11 +37,17 @@ jobs:
           - x86_64-apple-ios
         exclude:
           - target: armv7-apple-ios
-            channel: [beta, nightly]
+            channel: beta
+          - target: armv7-apple-ios
+            channel: nightly
           - target: armv7s-apple-ios
-            channel: [beta, nightly]
+            channel: beta
+          - target: armv7s-apple-ios
+            channel: nightly
           - target: i386-apple-ios
-            channel: [beta, nightly]
+            channel: beta
+          - target: i386-apple-ios
+            channel: nightly
   linux:
     runs-on: ubuntu-latest
     steps:
