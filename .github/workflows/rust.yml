@@ -57,9 +57,11 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: cross-apple-darwin
-          path: /usr/local/bin/cross
+          path: /usr/local/bin/
       - name: Set Rust Version & Target
-        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
+        run: |
+          ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
+          ls /usr/local/bin
       - name: Build
         run: cross build --workspace --target ${{ matrix.target }}
       - name: Test
