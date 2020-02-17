@@ -21,7 +21,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: cross-${{ matrix.platform }}
-          path: ${{ steps.cross.output.install_path }}
+          path: ${{ steps.cross.outputs.install_path }}
     strategy:
       matrix:
         platform: [linux-musl, apple-darwin]
