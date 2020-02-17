@@ -126,7 +126,7 @@ jobs:
       - name: Test
         run: /tmp/cross test --target ${{ matrix.target }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         channel: [stable, beta, nightly]
         target:
