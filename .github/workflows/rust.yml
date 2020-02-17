@@ -22,6 +22,7 @@ jobs:
         run: ${{ steps.cross.outputs.install_path }} build --workspace --target ${{ matrix.target }}
       - name: Test
         run: ${{ steps.cross.outputs.install_path }} test --workspace --target ${{ matrix.target }}
+        if: ${{ matrix.target == x86_64-apple-darwin }}
     strategy:
       fail-fast: false
       matrix:
