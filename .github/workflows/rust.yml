@@ -19,6 +19,7 @@ jobs:
           owner: rust-embedded
           repo: cross
           matches: linux-musl
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build
         run: /tmp/cross build --target ${{ matrix.target }}
       - name: Test
