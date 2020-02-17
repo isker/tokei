@@ -14,10 +14,15 @@ jobs:
           rustup default ${{ matrix.channel }}
           rustup target add ${{ matrix.target }}
           cargo install cross
+      - uses: ./actions/get-github-release
+        with:
+          owner: rust-embedded
+          repo: cross
+          matches: linux-musl
       - name: Build
-        run: cross build --target ${{ matrix.target }}
+        run: /tmp/cross build --target ${{ matrix.target }}
       - name: Test
-        run: cross test --target ${{ matrix.target }}
+        run: /tmp/cross test --target ${{ matrix.target }}
 
     strategy:
       fail-fast: true
