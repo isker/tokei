@@ -78,8 +78,7 @@ jobs:
       - name: Set Rust Version & Target
         run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
 
-      - name: Build
-        run: cross build --workspace --target ${{ matrix.target }}
+      - run: bash ci/build.bash cross ${{ matrix.triple }}
 
       - name: Test
         run: cross test --workspace --target ${{ matrix.target }}
@@ -133,8 +132,7 @@ jobs:
       - name: Set Rust Version & Target
         run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
 
-      - name: Build
-        run: /tmp/cross build --target ${{ matrix.target }}
+      - run: bash ci/build.bash /tmp/cross ${{ matrix.triple }}
 
       - name: Test
         run: /tmp/cross test --target ${{ matrix.target }}
@@ -157,39 +155,42 @@ jobs:
           matrix.target != 'x86_64-unknown-netbsd'
 
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         channel: [stable, beta, nightly]
         target:
           # Linux
-          # - aarch64-unknown-linux-gnu
-          # - arm-unknown-linux-gnueabi
-          # - armv7-unknown-linux-gnueabihf
-          # - i686-unknown-linux-gnu
-          # - i686-unknown-linux-musl
-          # - mips-unknown-linux-gnu
-          # - mips64-unknown-linux-gnuabi64
-          # - mips64el-unknown-linux-gnuabi64
-          # - mipsel-unknown-linux-gnu
-          # - powerpc-unknown-linux-gnu
-          # - powerpc64-unknown-linux-gnu
-          # - powerpc64le-unknown-linux-gnu
-          # - s390x-unknown-linux-gnu
-          # - x86_64-unknown-linux-gnu
-          # - x86_64-unknown-linux-musl
+          - aarch64-unknown-linux-gnu
+          - arm-unknown-linux-gnueabi
+          - armv7-unknown-linux-gnueabihf
+          - i686-unknown-linux-gnu
+          - i686-unknown-linux-musl
+          - mips-unknown-linux-gnu
+          - mips64-unknown-linux-gnuabi64
+          - mips64el-unknown-linux-gnuabi64
+          - mipsel-unknown-linux-gnu
+          - powerpc-unknown-linux-gnu
+          - powerpc64-unknown-linux-gnu
+          - powerpc64le-unknown-linux-gnu
+          - s390x-unknown-linux-gnu
+          - x86_64-unknown-linux-gnu
+          - x86_64-unknown-linux-musl
           # Android
-          # - aarch64-linux-android
-          # - arm-linux-androideabi
-          # - armv7-linux-androideabi
-          # - i686-linux-android
-          # - x86_64-linux-android
+          - aarch64-linux-android
+          - arm-linux-androideabi
+          - armv7-linux-androideabi
+          - i686-linux-android
+          - x86_64-linux-android
           # *BSD
           # The FreeBSD targets can have issues linking so they are disabled
           # by default.
           # - i686-unknown-freebsd
           # - x86_64-unknown-freebsd
           - x86_64-unknown-netbsd
-          - thumbv6m-none-eabi
-          - thumbv7em-none-eabi
-          - thumbv7em-none-eabihf
-          - thumbv7m-none-eabi
+          # Bare Metal
+          # These are no-std embedded targets, so they will only build if your
+          # crate is `no_std` compatible.
+          # - thumbv6m-none-eabi
+          # - thumbv7em-none-eabi
+          # - thumbv7em-none-eabihf
+          # - thumbv7m-none-eabi
