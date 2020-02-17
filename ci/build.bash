@@ -7,17 +7,17 @@ TARGET_TRIPLE=$2
 # $3 {boolean} = Whether or not building for release or not.
 RELEASE_BUILD=$3
 
-if [-z "$CROSS" ]; then
+if [ -z "$CROSS" ]; then
     echo "No cross binary provided"
     exit 1
 fi
 
-if [-z "$TARGET_TRIPLE" ]; then
+if [ -z "$TARGET_TRIPLE" ]; then
     echo "No target triple provided"
     exit 1
 fi
 
-if [-z "$RELEASE_BUILD" ]; then
+if [ -z "$RELEASE_BUILD" ]; then
     $CROSS build --target $TARGET_TRIPLE
     $CROSS build --target $TARGET_TRIPLE --all-features
 else
