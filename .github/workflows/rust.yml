@@ -13,10 +13,11 @@ jobs:
         run: |
           rustup default ${{ matrix.channel }}
           rustup target add ${{ matrix.target }}
+          cargo install cross
       - name: Build
-        run: cargo build --target ${{ matrix.target }}
+        run: cross build --target ${{ matrix.target }}
       - name: Test
-        run: cargo test --target ${{ matrix.target }}
+        run: cross test --target ${{ matrix.target }}
 
     strategy:
       fail-fast: true
