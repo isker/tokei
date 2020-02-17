@@ -26,27 +26,27 @@ jobs:
       matrix:
         platform: [linux-musl, apple-darwin]
 
-    windows:
-      runs-on: windows-latest
-      steps:
-        - uses: actions/checkout@v1
-          with:
-            depth: 50
-        - name: Set Rust Version & Target
-          run: bash ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-        - name: Build
-          run: cargo build --workspace --target ${{ matrix.target }}
-        - name: Test
-          run: cargo test --workspace --target ${{ matrix.target }}
-      strategy:
-        fail-fast: false
-        matrix:
-          channel: [stable, beta, nightly]
-          target:
-            - i686-pc-windows-gnu
-            - i686-pc-windows-msvc
-            - x86_64-pc-windows-gnu
-            - x86_64-pc-windows-msvc
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          depth: 50
+      - name: Set Rust Version & Target
+        run: bash ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
+      - name: Build
+        run: cargo build --workspace --target ${{ matrix.target }}
+      - name: Test
+        run: cargo test --workspace --target ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [stable, beta, nightly]
+        target:
+          - i686-pc-windows-gnu
+          - i686-pc-windows-msvc
+          - x86_64-pc-windows-gnu
+          - x86_64-pc-windows-msvc
 
   macos:
     runs-on: macos-latest
