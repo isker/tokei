@@ -126,6 +126,10 @@ jobs:
         run: /tmp/cross build --target ${{ matrix.target }}
       - name: Test
         run: /tmp/cross test --target ${{ matrix.target }}
+        if: |
+          matrix.target != 'aarch64-linux-android' &&
+          matrix.target != 'arm-linux-androideabi' &&
+          matrix.target != 'armv7-linux-androideabi'
     strategy:
       fail-fast: false
       matrix:
