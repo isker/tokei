@@ -3,7 +3,7 @@ name: Trust 2.0
 on: [push, pull_request]
 
 jobs:
-  install_cross:
+  install-cross:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -50,7 +50,7 @@ jobs:
 
   macos:
     runs-on: macos-latest
-    needs: install_cross
+    needs: install-cross
     steps:
       - uses: actions/checkout@v1
         with:
@@ -100,7 +100,7 @@ jobs:
 
   linux:
     runs-on: ubuntu-latest
-    needs: install_cross
+    needs: install-cross
     steps:
       - uses: actions/checkout@v1
         with:
@@ -109,15 +109,15 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: cross-linux-musl
-          path: /usr/local/bin/
+          path: /tmp/
       - name: Make Cross Executable
-        run: chmod +x /usr/local/bin/cross
+        run: chmod +x /tmp/cross
       - name: Set Rust Version & Target
         run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
       - name: Build
-        run: cross build --target ${{ matrix.target }}
+        run: /tmp/cross build --target ${{ matrix.target }}
       - name: Test
-        run: cross test --target ${{ matrix.target }}
+        run: /tmp/cross test --target ${{ matrix.target }}
     strategy:
       fail-fast: true
       matrix:
