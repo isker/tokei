@@ -13,7 +13,6 @@ jobs:
         run: |
           rustup default ${{ matrix.channel }}
           rustup target add ${{ matrix.target }}
-          cargo install cross
       - uses: ./actions/get-github-release
         with:
           owner: rust-embedded
