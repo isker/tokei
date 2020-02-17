@@ -3,16 +3,38 @@ name: Rust
 on: [push, pull_request]
 
 jobs:
-  linux:
-    runs-on: ${{ matrix.os }}
+  macos:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
         with:
           depth: 50
       - name: Set Rust Version & Target
-        run: |
-          rustup default ${{ matrix.channel }}
-          rustup target add ${{ matrix.target }}
+        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
+      - uses: ./actions/get-github-release
+        with:
+          owner: rust-embedded
+          repo: cross
+          matches: linux-musl
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
+        run: /tmp/cross build --workspace --target ${{ matrix.target }}
+      - name: Test
+        run: /tmp/cross test --workspace --target ${{ matrix.target }}
+    strategy:
+      fail-fast: true
+      matrix:
+        channel: [stable, beta, nightly]
+        target:
+          - x86_64-apple-darwin
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          depth: 50
+      - name: Set Rust Version & Target
+        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
       - uses: ./actions/get-github-release
         with:
           owner: rust-embedded
@@ -23,16 +45,11 @@ jobs:
         run: /tmp/cross build --target ${{ matrix.target }}
       - name: Test
         run: /tmp/cross test --target ${{ matrix.target }}
-
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, macos-latest]
         channel: [stable, beta, nightly]
         target:
-          # Apple
-          - x86_64-apple-darwin
-          # Linux
           - aarch64-unknown-linux-gnu
           - arm-unknown-linux-gnueabi
           - armv7-unknown-linux-gnueabihf
@@ -45,27 +62,6 @@ jobs:
           - powerpc-unknown-linux-gnu
           - powerpc64-unknown-linux-gnu
           - powerpc64le-unknown-linux-gnu
-          - s390x-unknown-linux-gnu # DISABLE_TESTS=1
+          - s390x-unknown-linux-gnu
           - x86_64-unknown-linux-gnu
           - x86_64-unknown-linux-musl
-        exclude:
-          - os: ubuntu-latest
-            target: x86_64-apple-darwin
-          - os: macos-latest
-            target:
-              # Linux
-              - aarch64-unknown-linux-gnu
-              - arm-unknown-linux-gnueabi
-              - armv7-unknown-linux-gnueabihf
-              - i686-unknown-linux-gnu
-              - i686-unknown-linux-musl
-              - mips-unknown-linux-gnu
-              - mips64-unknown-linux-gnuabi64
-              - mips64el-unknown-linux-gnuabi64
-              - mipsel-unknown-linux-gnu
-              - powerpc-unknown-linux-gnu
-              - powerpc64-unknown-linux-gnu
-              - powerpc64le-unknown-linux-gnu
-              - s390x-unknown-linux-gnu # DISABLE_TESTS=1
-              - x86_64-unknown-linux-gnu
-              - x86_64-unknown-linux-musl
