@@ -145,7 +145,11 @@ jobs:
           matrix.target != 'aarch64-linux-android' &&
           matrix.target != 'arm-linux-androideabi' &&
           matrix.target != 'armv7-linux-androideabi' &&
-          matrix.target != 'x86_64-linux-android'
+          matrix.target != 'x86_64-linux-android' &&
+          # We can't execute *BSD executables
+          matrix.target != 'i686-unknown-freebsd' &&
+          matrix.target != 'x86_64-unknown-freebsd' &&
+          matrix.target != 'x86_64-unknown-netbsd'
 
     strategy:
       fail-fast: false
@@ -175,6 +179,12 @@ jobs:
           # - i686-linux-android
           # - x86_64-linux-android
           # *BSD
-          - i686-unknown-freebsd
-          - x86_64-unknown-freebsd
+          # The FreeBSD targets can have issues linking so they are disabled
+          # by default.
+          # - i686-unknown-freebsd
+          # - x86_64-unknown-freebsd
           - x86_64-unknown-netbsd
+          - thumbv6m-none-eabi
+          - thumbv7em-none-eabi
+          - thumbv7em-none-eabihf
+          - thumbv7m-none-eabi
