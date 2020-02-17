@@ -50,9 +50,7 @@ jobs:
           - x86_64-unknown-linux-musl
         exclude:
           - os: ubuntu-latest
-            target:
-              # Apple Platforms
-              - x86_64-apple-darwin
+            target: x86_64-apple-darwin
           - os: macos-latest
             target:
               # Linux
