@@ -23,7 +23,7 @@ jobs:
       - name: Test
         run: ${{ steps.cross.outputs.install_path }} test --workspace --target ${{ matrix.target }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         channel: [stable, beta, nightly]
         target:
