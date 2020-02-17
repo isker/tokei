@@ -1,8 +1,29 @@
-name: Rust
+name: Trust 2.0
 
 on: [push, pull_request]
 
 jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          depth: 50
+      - name: Set Rust Version & Target
+        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
+      - name: Build
+        run: cargo build --workspace --target ${{ matrix.target }}
+      - name: Test
+        run: cargo test --workspace --target ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [stable, beta, nightly]
+        target:
+          - i686-pc-windows-gnu
+          - i686-pc-windows-msvc
+          - x86_64-pc-windows-gnu
+          - x86_64-pc-windows-msvc
   macos:
     runs-on: macos-latest
     steps:
@@ -29,13 +50,16 @@ jobs:
       matrix:
         channel: [stable, beta, nightly]
         target:
+          # macOS
           - x86_64-apple-darwin
+          # iOS
           - aarch64-apple-ios
           - armv7-apple-ios
           - armv7s-apple-ios
           - i386-apple-ios
           - x86_64-apple-ios
         exclude:
+          # There are no beta or nightly versions of these platforms available.
           - target: armv7-apple-ios
             channel: beta
           - target: armv7-apple-ios
