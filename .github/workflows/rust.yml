@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   install_cross:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Install Cross
         uses: ./actions/get-github-release
