@@ -9563,6 +9563,7 @@ const util = __webpack_require__(669)
 const writeFile = util.promisify(fs.writeFile)
 
 // Third Party libraries
+const core = __webpack_require__(470)
 const exec = __webpack_require__(986)
 const github = __webpack_require__(469)
 const fetch = __webpack_require__(454)
@@ -9598,6 +9599,7 @@ exports.getGitHubRelease = async function (owner, repo, matches, token, installP
 
     await writeFile(tarFile, await (await fetch(url)).buffer())
     await exec.exec('tar', ['-xvzf', tarFile])
+    core.setOutput('install_path', installPath)
     return installPath
   } catch (error) {
     console.log(error)

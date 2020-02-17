@@ -6,6 +6,7 @@ const util = require('util')
 const writeFile = util.promisify(fs.writeFile)
 
 // Third Party libraries
+const core = require('@actions/core')
 const exec = require('@actions/exec')
 const github = require('@actions/github')
 const fetch = require('node-fetch')
@@ -41,6 +42,7 @@ exports.getGitHubRelease = async function (owner, repo, matches, token, installP
 
     await writeFile(tarFile, await (await fetch(url)).buffer())
     await exec.exec('tar', ['-xvzf', tarFile])
+    core.setOutput('install_path', installPath)
     return installPath
   } catch (error) {
     console.log(error)
