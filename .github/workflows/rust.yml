@@ -78,7 +78,7 @@ jobs:
       - name: Set Rust Version & Target
         run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
 
-      - run: bash ci/build.bash cross ${{ matrix.triple }}
+      - run: bash ci/build.bash cross ${{ matrix.target }}
 
       - name: Test
         run: cross test --workspace --target ${{ matrix.target }}
@@ -132,7 +132,7 @@ jobs:
       - name: Set Rust Version & Target
         run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
 
-      - run: bash ci/build.bash /tmp/cross ${{ matrix.triple }}
+      - run: bash ci/build.bash /tmp/cross ${{ matrix.target }}
 
       - name: Test
         run: /tmp/cross test --target ${{ matrix.target }}
