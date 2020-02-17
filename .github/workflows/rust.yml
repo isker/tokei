@@ -138,15 +138,20 @@ jobs:
 
       - name: Test
         run: /tmp/cross test --target ${{ matrix.target }}
-        # These Android targets have issues with being tested, so they are
-        # disabled by default. The only android target that reliably builds
+        # These targets have issues with being tested, so they are disabled by
+        # default.
+        #
+        # Android:
+        # The only android target that reliably builds
         # and tests is i686-linux-android.
+        #
+        # *BSD:
+        # We can't execute *BSD executables, so we don't bother trying.
         if: |
           matrix.target != 'aarch64-linux-android' &&
           matrix.target != 'arm-linux-androideabi' &&
           matrix.target != 'armv7-linux-androideabi' &&
           matrix.target != 'x86_64-linux-android' &&
-          # We can't execute *BSD executables
           matrix.target != 'i686-unknown-freebsd' &&
           matrix.target != 'x86_64-unknown-freebsd' &&
           matrix.target != 'x86_64-unknown-netbsd'
