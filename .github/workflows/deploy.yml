@@ -26,7 +26,7 @@ jobs:
       - run: bash ci/set_rust_version.bash stable ${{ matrix.target }}
       - run: bash ci/build.bash cargo ${{ matrix.target }} RELEASE
       - run: bash -c 'ls target/release'
-      - run: bash -c '7z a "${{ env.BIN }}.zip" target/${{ matrix.target }}/release/${{ env.BIN }}'
+      - run: bash -c '7z a "${{ env.BIN }}.zip" target/release/${{ env.BIN }}'
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
