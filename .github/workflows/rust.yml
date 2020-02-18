@@ -120,15 +120,9 @@ jobs:
       - run: chmod +x /tmp/cross
       - run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
       - run: bash ci/build.bash /tmp/cross ${{ matrix.target }}
-        # These targets have issues with being tested, so they are disabled by
-        # default.
-        #
-        # Android:
-        # The only android target that reliably both builds and tests
-        # is `i686-linux-android`.
-        #
-        # *BSD:
-        # We can't execute *BSD executables, so we don't bother trying.
+        # These targets have issues with being tested so they are disabled
+        # by default. You can try disabling to see if they work for
+        # your project.
       - run: bash ci/test.bash /tmp/cross ${{ matrix.target }}
         if: |
           matrix.target != 'aarch64-linux-android' &&
@@ -136,7 +130,10 @@ jobs:
           matrix.target != 'armv5te-unknown-linux-musleabi' &&
           matrix.target != 'armv7-linux-androideabi' &&
           matrix.target != 'i686-unknown-freebsd' &&
+          matrix.target != 'sparc64-unknown-linux-gnu' &&
+          matrix.target != 'sparcv9-sun-solaris' &&
           matrix.target != 'x86_64-linux-android' &&
+          matrix.target != 'x86_64-sun-solaris' &&
           matrix.target != 'x86_64-unknown-freebsd' &&
           matrix.target != 'x86_64-unknown-netbsd'
 
@@ -186,8 +183,8 @@ jobs:
           # - i686-unknown-freebsd
           # - x86_64-unknown-freebsd
           - x86_64-unknown-netbsd
-          # DragonFly
-          - x86_64-unknown-dragonfly
+          # DragonFly (Doesn't currently work)
+          # - x86_64-unknown-dragonfly
           # Solaris
           - sparcv9-sun-solaris
           - x86_64-sun-solaris
