@@ -4,7 +4,7 @@ on:
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 
-name: Deploy Release
+name: Mean Bean Deploy
 env:
   BIN: tokei
 
@@ -51,6 +51,7 @@ jobs:
       - run: ci/set_rust_version.bash stable ${{ matrix.target }}
       - run: ci/build.bash cargo ${{ matrix.target }} RELEASE
       - run: 7z a "${{ env.BIN }}.zip" target/${{ matrix.target }}/release/${{ env.BIN }}.exe
+        shell: powershell
         # We're using using a fork of `actions/create-release` that detects
         # whether a release is already available or not first.
       - uses: XAMPPRocky/create-release@v1.0.2
