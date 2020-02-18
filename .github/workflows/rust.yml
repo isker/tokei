@@ -133,14 +133,15 @@ jobs:
         if: |
           matrix.target != 'aarch64-linux-android' &&
           matrix.target != 'arm-linux-androideabi' &&
+          matrix.target != 'armv5te-unknown-linux-musleabi' &&
           matrix.target != 'armv7-linux-androideabi' &&
-          matrix.target != 'x86_64-linux-android' &&
           matrix.target != 'i686-unknown-freebsd' &&
+          matrix.target != 'x86_64-linux-android' &&
           matrix.target != 'x86_64-unknown-freebsd' &&
           matrix.target != 'x86_64-unknown-netbsd'
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         channel: [stable, beta, nightly]
         target:
