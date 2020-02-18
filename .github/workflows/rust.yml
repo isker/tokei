@@ -127,17 +127,11 @@ jobs:
         # your project.
       - run: ci/test.bash /tmp/cross ${{ matrix.target }}
         if: |
-          matrix.target != 'aarch64-linux-android' &&
-          matrix.target != 'arm-linux-androideabi' &&
+          !contains(matrix.target, 'android') &&
+          !contains(matrix.target, 'bsd') &&
+          !contains(matrix.target, 'solaris') &&
           matrix.target != 'armv5te-unknown-linux-musleabi' &&
-          matrix.target != 'armv7-linux-androideabi' &&
-          matrix.target != 'i686-unknown-freebsd' &&
-          matrix.target != 'sparc64-unknown-linux-gnu' &&
-          matrix.target != 'sparcv9-sun-solaris' &&
-          matrix.target != 'x86_64-linux-android' &&
-          matrix.target != 'x86_64-sun-solaris' &&
-          matrix.target != 'x86_64-unknown-freebsd' &&
-          matrix.target != 'x86_64-unknown-netbsd'
+          matrix.target != 'sparc64-unknown-linux-gnu'
 
     strategy:
       fail-fast: true
