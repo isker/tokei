@@ -1,4 +1,4 @@
-name: Trust 2.0
+name: Mean Bean CI
 
 on: [push, pull_request]
 
