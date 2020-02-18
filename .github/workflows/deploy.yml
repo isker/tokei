@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - run: bash ci/set_rust_version.bash stable ${{ matrix.target }}
-      - run: bash ci/build.bash cargo ${{ matrix.target }} RELEASE
+      - run: bash ci/build.bash cargo ${{ matrix.target }}
       - run: bash -c '7z a "${{ env.BIN }}.zip" target/${{ matrix.target }}/release/${{ env.BIN }}.exe'
       - name: Create Release
         id: create_release
