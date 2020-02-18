@@ -71,9 +71,9 @@ jobs:
       - run: chmod +x /usr/local/bin/cross
 
       - run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-      - run: bash ci/build.bash cross ${{ matrix.target }}
+      - run: ci/build.bash cross ${{ matrix.target }}
         # Only test on macOS platforms since we can't simulate the others.
-      - run: bash ci/test.bash cross ${{ matrix.target }}
+      - run: ci/test.bash cross ${{ matrix.target }}
         if: matrix.target == 'x86_64-apple-darwin'
 
     strategy:
@@ -119,7 +119,7 @@ jobs:
           path: /tmp/
       - run: chmod +x /tmp/cross
       - run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-      - run: bash ci/build.bash /tmp/cross ${{ matrix.target }}
+      - run: ci/build.bash /tmp/cross ${{ matrix.target }}
         # These targets have issues with being tested so they are disabled
         # by default. You can try disabling to see if they work for
         # your project.
