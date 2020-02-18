@@ -50,7 +50,11 @@ jobs:
       - uses: actions/checkout@v2
       - run: bash ci/set_rust_version.bash stable ${{ matrix.target }}
       - run: bash ci/build.bash cargo ${{ matrix.target }} RELEASE
-      - run: bash -c '7z a "${{ env.BIN }}.zip" "target/${{ matrix.target }}/release/${{ env.BIN }}.exe"'
+      - run: |
+          cd ./target/${{ matrix.target }}/release/
+          7z a "${{ env.BIN }}.zip" "${{ env.BIN }}.exe"
+          mv "${{ env.BIN }}.zip" $GITHUB_WORKSPACE
+        shell: bash
         # We're using using a fork of `actions/create-release` that detects
         # whether a release is already available or not first.
       - uses: XAMPPRocky/create-release@v1.0.2
@@ -98,7 +102,7 @@ jobs:
 
       - run: ci/set_rust_version.bash stable ${{ matrix.target }}
       - run: ci/build.bash cross ${{ matrix.target }} RELEASE
-      - run: tar -czvf ${{ env.BIN }}.tar.gz target/${{ matrix.target }}/release/${{ env.BIN }}
+      - run: tar -czvf ${{ env.BIN }}.tar.gz --directory=target/${{ matrix.target }}/release ${{ env.BIN }}
       - uses: XAMPPRocky/create-release@v1.0.2
         id: create_release
         env:
@@ -173,7 +177,7 @@ jobs:
 
       - run: ci/set_rust_version.bash stable ${{ matrix.target }}
       - run: ci/build.bash /tmp/cross ${{ matrix.target }} RELEASE
-      - run: tar -czvf ${{ env.BIN }}.tar.gz target/${{ matrix.target }}/release/${{ env.BIN }}
+      - run: tar -czvf ${{ env.BIN }}.tar.gz --directory=target/${{ matrix.target }}/release ${{ env.BIN }}
       - uses: XAMPPRocky/create-release@v1.0.2
         id: create_release
         env:
