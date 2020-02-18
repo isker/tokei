@@ -19,7 +19,5 @@ if [ -z "$RELEASE_BUILD" ]; then
     $CROSS build --target $TARGET_TRIPLE --all-features
 else
     $CROSS build --target $TARGET_TRIPLE --all-features --release
-    $CROSS run --target $TARGET_TRIPLE --all-features --release
-    ls target/release
 fi
 
