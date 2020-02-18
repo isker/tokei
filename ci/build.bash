@@ -1,21 +1,18 @@
 #!/usr/bin/env bash
-# Script for building your rust projects
-# $1 {path} = Path to cross executable
+# Script for building your rust projects.
+set -e
+
+source ci/common.bash
+
+# $1 {path} = Path to cross/cargo executable
 CROSS=$1
 # $1 {string} = <Target Triple>
 TARGET_TRIPLE=$2
 # $3 {boolean} = Whether or not building for release or not.
 RELEASE_BUILD=$3
 
-if [ -z "$CROSS" ]; then
-    echo "No cross binary provided"
-    exit 1
-fi
-
-if [ -z "$TARGET_TRIPLE" ]; then
-    echo "No target triple provided"
-    exit 1
-fi
+required_arg $CROSS 'CROSS'
+required_arg $TARGET_TRIPLE '<Target Triple>'
 
 if [ -z "$RELEASE_BUILD" ]; then
     $CROSS build --target $TARGET_TRIPLE
@@ -23,3 +20,4 @@ if [ -z "$RELEASE_BUILD" ]; then
 else
     $CROSS build --target $TARGET_TRIPLE --all-features --release
 fi
+

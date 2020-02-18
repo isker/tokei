@@ -3,22 +3,24 @@ name: Trust 2.0
 on: [push, pull_request]
 
 jobs:
+  # This job downloads and stores `cross` as an artifact, so that it can be
+  # redownloaded across all of the jobs. Currently this copied pasted between
+  # `ci.yml` and `deploy.yml`. Make sure to update both places when making
+  # changes.
   install-cross:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
         with:
           depth: 50
-      - name: Install Cross
-        uses: ./actions/get-github-release
+      - uses: ./actions/get-github-release
         id: cross
         with:
           owner: rust-embedded
           repo: cross
           matches: ${{ matrix.platform }}
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload cross artifact
-        uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v1
         with:
           name: cross-${{ matrix.platform }}
           path: ${{ steps.cross.outputs.install_path }}
@@ -37,15 +39,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           depth: 50
-
-      - name: Set Rust Version & Target
-        run: bash ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-
-      - name: Build
-        run: cargo build --workspace --target ${{ matrix.target }}
-
-      - name: Test
-        run: cargo test --workspace --target ${{ matrix.target }}
+      - run: bash ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
+      - run: bash ci/build.bash cargo ${{ matrix.target }}
+      - run: bash ci/test.bash cargo ${{ matrix.target }}
 
     strategy:
       fail-fast: true
@@ -53,7 +49,7 @@ jobs:
         channel: [stable, beta, nightly]
         target:
           # MSVC
-          # - i686-pc-windows-msvc
+          - i686-pc-windows-msvc
           - x86_64-pc-windows-msvc
           # GNU
           # - i686-pc-windows-gnu
@@ -75,14 +71,10 @@ jobs:
 
       - run: chmod +x /usr/local/bin/cross
 
-      - name: Set Rust Version & Target
-        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-
+      - run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
       - run: bash ci/build.bash cross ${{ matrix.target }}
-
-      - name: Test
-        run: cross test --workspace --target ${{ matrix.target }}
         # Only test on macOS platforms since we can't simulate the others.
+      - run: bash ci/test.bash cross ${{ matrix.target }}
         if: matrix.target == 'x86_64-apple-darwin'
 
     strategy:
@@ -93,13 +85,13 @@ jobs:
           # macOS
           - x86_64-apple-darwin
           # iOS
-          # - aarch64-apple-ios
-          # - armv7-apple-ios
-          # - armv7s-apple-ios
-          # - i386-apple-ios
-          # - x86_64-apple-ios
+          - aarch64-apple-ios
+          - armv7-apple-ios
+          - armv7s-apple-ios
+          - i386-apple-ios
+          - x86_64-apple-ios
+        # There are no beta or nightly versions of these platforms available.
         exclude:
-          # There are no beta or nightly versions of these platforms available.
           - target: armv7-apple-ios
             channel: beta
           - target: armv7-apple-ios
@@ -126,25 +118,19 @@ jobs:
         with:
           name: cross-linux-musl
           path: /tmp/
-
       - run: chmod +x /tmp/cross
-
-      - name: Set Rust Version & Target
-        run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
-
+      - run: ci/set_rust_version.bash ${{ matrix.channel }} ${{ matrix.target }}
       - run: bash ci/build.bash /tmp/cross ${{ matrix.target }}
-
-      - name: Test
-        run: /tmp/cross test --target ${{ matrix.target }}
         # These targets have issues with being tested, so they are disabled by
         # default.
         #
         # Android:
-        # The only android target that reliably builds
-        # and tests is i686-linux-android.
+        # The only android target that reliably both builds and tests
+        # is `i686-linux-android`.
         #
         # *BSD:
         # We can't execute *BSD executables, so we don't bother trying.
+      - run: bash ci/test.bash /tmp/cross ${{ matrix.target }}
         if: |
           matrix.target != 'aarch64-linux-android' &&
           matrix.target != 'arm-linux-androideabi' &&
