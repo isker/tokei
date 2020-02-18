@@ -1,6 +1,8 @@
 name: Trust 2.0
 
-on: [push, pull_request]
+on: never
+
+# on: [push, pull_request]
 
 jobs:
   # This job downloads and stores `cross` as an artifact, so that it can be
