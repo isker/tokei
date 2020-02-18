@@ -49,7 +49,7 @@ jobs:
         channel: [stable, beta, nightly]
         target:
           # MSVC
-          - i686-pc-windows-msvc
+          # - i686-pc-windows-msvc
           - x86_64-pc-windows-msvc
           # GNU
           # - i686-pc-windows-gnu
@@ -84,11 +84,11 @@ jobs:
           # macOS
           - x86_64-apple-darwin
           # iOS
-          - aarch64-apple-ios
-          - armv7-apple-ios
-          - armv7s-apple-ios
-          - i386-apple-ios
-          - x86_64-apple-ios
+          # - aarch64-apple-ios
+          # - armv7-apple-ios
+          # - armv7s-apple-ios
+          # - i386-apple-ios
+          # - x86_64-apple-ios
         # There are no beta or nightly versions of these platforms available.
         exclude:
           - target: armv7-apple-ios
