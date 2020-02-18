@@ -16,6 +16,7 @@ jobs:
           owner: rust-embedded
           repo: cross
           matches: ${{ matrix.platform }}
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload cross artifact
         uses: actions/upload-artifact@v1
         with:

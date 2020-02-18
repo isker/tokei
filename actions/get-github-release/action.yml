@@ -13,7 +13,7 @@ inputs:
     required: true
   token:
     description: GitHub token for authenication.
-    default: ${{ secrets.GITHUB_TOKEN }}
+    required: true
   install_path:
     description: The path to install the binary. Defaults to /tmp/<repo name>
     required: false
