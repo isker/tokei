@@ -1,9 +1,15 @@
+const fs = require('fs')
+const path = require('path')
 const process = require('process')
+const util = require('util')
+
+const writeFile = util.promisify(fs.writeFile)
 
 // Third Party libraries
 const core = require('@actions/core')
+const exec = require('@actions/exec')
 const github = require('@actions/github')
-const tc = require('@actions/tool-cache')
+const fetch = require('node-fetch')
 
 /**
  * Fetches the latest release from `owner/repo` on GitHub that matches the
@@ -19,9 +25,12 @@ const tc = require('@actions/tool-cache')
  * the repository.
  * @param {string} [installPath='/tmp/${repo}'] - The path to install the binary.
  */
-exports.getGitHubRelease = async function (owner, repo, matches, token, installPath = '/tmp/') {
+exports.getGitHubRelease = async function (owner, repo, matches, token, installPath = `/tmp/${repo}`) {
   try {
+    // Change to be in the installation directory.
+    process.chdir(path.dirname(installPath))
     const octokit = new github.GitHub(token)
+    const tarFile = `${installPath}.tar.gz`
 
     // Retrieve first release that matched `regex` and download a tar archive of
     // the binary.
@@ -31,15 +40,8 @@ exports.getGitHubRelease = async function (owner, repo, matches, token, installP
       .find(asset => asset.name.match(matches))
       .browser_download_url
 
-    const downloadPath = await tc.downloadTool(url)
-    if (url.includes('7z')) {
-      await tc.extract7z(downloadPath, installPath)
-    } else if (url.includes('zip')) {
-      await tc.extractZip(downloadPath, installPath)
-    } else {
-      await tc.extractTar(downloadPath, installPath)
-    }
-
+    await writeFile(tarFile, await (await fetch(url)).buffer())
+    await exec.exec('tar', ['-xvzf', tarFile])
     core.setOutput('install_path', installPath)
     return installPath
   } catch (error) {
