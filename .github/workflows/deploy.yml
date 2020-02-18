@@ -28,7 +28,7 @@ jobs:
       - run: bash -c '7z a "${{ env.BIN }}.zip" target/${{ matrix.target }}/debug/${{ env.BIN }}.exe'
       - name: Create Release
         id: create_release
-        uses: XAMPPRocky/create-release@master
+        uses: XAMPPRocky/create-release@09d4e7a1cea21ca57d96c0b3e98bad3e3cd6a387
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
