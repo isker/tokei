@@ -49,8 +49,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: ci/set_rust_version.bash stable ${{ matrix.target }}
-      - run: ci/build.bash cargo ${{ matrix.target }}
-      - run: 7z a "${{ env.BIN }}.zip" target/${{ matrix.target }}/debug/${{ env.BIN }}.exe
+      - run: ci/build.bash cargo ${{ matrix.target }} RELEASE
+      - run: 7z a "${{ env.BIN }}.zip" target/${{ matrix.target }}/release/${{ env.BIN }}.exe
         # We're using using a fork of `actions/create-release` that detects
         # whether a release is already available or not first.
       - uses: XAMPPRocky/create-release@1.0.2
@@ -60,6 +60,8 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
+          # Draft should **always** be false. GitHub doesn't provide a way to
+          # get draft releases from its API, so there's no point using it.
           draft: false
           prerelease: true
       - uses: actions/upload-release-asset@v1
@@ -95,8 +97,8 @@ jobs:
       - run: chmod +x /usr/local/bin/cross
 
       - run: ci/set_rust_version.bash stable ${{ matrix.target }}
-      - run: ci/build.bash cross ${{ matrix.target }}
-      - run: tar -czvf ${{ env.BIN }}.tar.gz target/${{ matrix.target }}/debug/${{ env.BIN }}
+      - run: ci/build.bash cross ${{ matrix.target }} RELEASE
+      - run: tar -czvf ${{ env.BIN }}.tar.gz target/${{ matrix.target }}/release/${{ env.BIN }}
       - uses: XAMPPRocky/create-release@master
         id: create_release
         env:
@@ -170,8 +172,8 @@ jobs:
       - run: chmod +x /tmp/cross
 
       - run: ci/set_rust_version.bash stable ${{ matrix.target }}
-      - run: ci/build.bash /tmp/cross ${{ matrix.target }}
-      - run: tar -czvf ${{ env.BIN }}.tar.gz target/${{ matrix.target }}/debug/${{ env.BIN }}
+      - run: ci/build.bash /tmp/cross ${{ matrix.target }} RELEASE
+      - run: tar -czvf ${{ env.BIN }}.tar.gz target/${{ matrix.target }}/release/${{ env.BIN }}
       - uses: XAMPPRocky/create-release@master
         id: create_release
         env:
