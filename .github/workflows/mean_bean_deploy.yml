@@ -48,8 +48,8 @@ jobs:
           # - x86_64-pc-windows-gnu
     steps:
       - uses: actions/checkout@v2
-      - run: ci/set_rust_version.bash stable ${{ matrix.target }}
-      - run: ci/build.bash cargo ${{ matrix.target }} RELEASE
+      - run: bash ci/set_rust_version.bash stable ${{ matrix.target }}
+      - run: bash ci/build.bash cargo ${{ matrix.target }} RELEASE
       - run: bash -c '7z a "${{ env.BIN }}.zip" "target/${{ matrix.target }}/release/${{ env.BIN }}.exe"'
         # We're using using a fork of `actions/create-release` that detects
         # whether a release is already available or not first.
